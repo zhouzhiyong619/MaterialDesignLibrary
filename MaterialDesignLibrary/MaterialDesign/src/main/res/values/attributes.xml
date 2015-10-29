@@ -20,6 +20,7 @@
         <attr name="ringWidth" format="dimension" />
         <!-- in switche's view indicate state of view -->
         <attr name="check" format="boolean" />
+        <attr name="unchecked" format="dimension" />
         <attr name="checkBoxSize" format="dimension" />
         <attr name="thumbSize" format="dimension" />
         <!-- in float button indicate icon resource -->
