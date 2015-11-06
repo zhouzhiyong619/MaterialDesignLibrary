@@ -200,6 +200,19 @@ public class CheckBox extends CustomView {
 
     }
 
+    public void setCheckedNoAnim(boolean check){
+        invalidate();
+        this.check = check;
+        setPressed(false);
+        changeBackgroundColor(getResources().getColor(
+                android.R.color.transparent));
+        if (check) {
+            step = 11;
+        }
+        if (check)
+            checkView.changeBackground();
+    }
+
     public boolean isCheck() {
         return check;
     }
