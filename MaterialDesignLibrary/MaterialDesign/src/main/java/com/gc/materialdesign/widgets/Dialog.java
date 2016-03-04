@@ -1,220 +1,120 @@
 package com.gc.materialdesign.widgets;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.gc.materialdesign.R;
 import com.gc.materialdesign.views.ButtonFlat;
 
-public class Dialog extends android.app.Dialog{
-	
-	Context context;
-	View view;
-	View backView;
-	String message;
-	TextView messageTextView;
-	String title;
-	TextView titleTextView;
-	
-	ButtonFlat buttonAccept;
-	ButtonFlat buttonCancel;
-	
-	String buttonCancelText;
-	
-	View.OnClickListener onAcceptButtonClickListener;
-	View.OnClickListener onCancelButtonClickListener;
-	
-	
-	public Dialog(Context context,String title, String message) {
-		super(context, android.R.style.Theme_Translucent);
-		this.context = context;// init Context
-		this.message = message;
-		this.title = title;
-	}
-	
-	public void addCancelButton(String buttonCancelText){
-		this.buttonCancelText = buttonCancelText;
-	}
-	
-	public void addCancelButton(String buttonCancelText, View.OnClickListener onCancelButtonClickListener){
-		this.buttonCancelText = buttonCancelText;
-		this.onCancelButtonClickListener = onCancelButtonClickListener;
-	}
-	
-	
-	@Override
-	  protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.dialog);
-	    
-		view = (RelativeLayout)findViewById(R.id.contentDialog);
-		backView = (RelativeLayout)findViewById(R.id.dialog_rootView);
-		backView.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getX() < view.getLeft() 
-						|| event.getX() >view.getRight()
-						|| event.getY() > view.getBottom() 
-						|| event.getY() < view.getTop()) {
-					dismiss();
-				}
-				return false;
-			}
-		});
-		
-	    this.titleTextView = (TextView) findViewById(R.id.title);
-	    setTitle(title);
-	    
-	    this.messageTextView = (TextView) findViewById(R.id.message);
-	    setMessage(message);
-	    
-	    this.buttonAccept = (ButtonFlat) findViewById(R.id.button_accept);
-	    buttonAccept.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dismiss();
-				if(onAcceptButtonClickListener != null)
-			    	onAcceptButtonClickListener.onClick(v);
-			}
-		});
-	    
-	    if(buttonCancelText != null){
-		    this.buttonCancel = (ButtonFlat) findViewById(R.id.button_cancel);
-		    this.buttonCancel.setVisibility(View.VISIBLE);
-		    this.buttonCancel.setText(buttonCancelText);
-	    	buttonCancel.setOnClickListener(new View.OnClickListener() {
-	    		
-				@Override
-				public void onClick(View v) {
-					dismiss();	
-					if(onCancelButtonClickListener != null)
-				    	onCancelButtonClickListener.onClick(v);
-				}
-			});
-	    }
-	}
-	
-	@Override
-	public void show() {
-		// TODO 自动生成的方法存根
-		super.show();
-		// set dialog enter animations
-		view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.dialog_main_show_amination));
-		backView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.dialog_root_show_amin));
-	}
-	
-	// GETERS & SETTERS
+public class Dialog extends android.app.Dialog {
 
-	public String getMessage() {
-		return message;
-	}
+    Context mContext;
+    View mRootView;
+    View mContentView;
+    ScrollView mScrollView;
+    TextView mMsg;
+    TextView mTitle;
+    FrameLayout mInnerView;
 
-	public void setMessage(String message) {
-		this.message = message;
-		messageTextView.setText(message);
-	}
+    ButtonFlat mOkBtn;
+    ButtonFlat mCancelBtn;
 
-	public TextView getMessageTextView() {
-		return messageTextView;
-	}
+    public Dialog(Context context) {
+        this(context, "", "");
+    }
 
-	public void setMessageTextView(TextView messageTextView) {
-		this.messageTextView = messageTextView;
-	}
+    public Dialog(Context context, String title, String message) {
+        super(context, R.style.CustomDialog);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.dialog);
+        mTitle = (TextView) findViewById(R.id.title);
+        mRootView = findViewById(R.id.dialog_rootView);
+        mContentView = findViewById(R.id.contentDialog);
+        mInnerView = (FrameLayout) findViewById(R.id.inner_view);
+        mMsg = (TextView) findViewById(R.id.message);
+        mCancelBtn = (ButtonFlat) findViewById(R.id.button_cancel);
+        mOkBtn = (ButtonFlat) findViewById(R.id.button_accept);
+        mScrollView = (ScrollView) findViewById(R.id.message_scrollView);
+        mContext = context;
+        setTitle(title);
+        setMessage(message);
+        this.setCanceledOnTouchOutside(true);
 
-	public String getTitle() {
-		return title;
-	}
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-		if(title == null)
-			titleTextView.setVisibility(View.GONE);
-		else{
-			titleTextView.setVisibility(View.VISIBLE);
-			titleTextView.setText(title);
-		}
-	}
 
-	public TextView getTitleTextView() {
-		return titleTextView;
-	}
+    public ButtonFlat getCancelBtn() {
+        return mCancelBtn;
+    }
 
-	public void setTitleTextView(TextView titleTextView) {
-		this.titleTextView = titleTextView;
-	}
+    public ButtonFlat getOkBtn() {
+        return mOkBtn;
+    }
 
-	public ButtonFlat getButtonAccept() {
-		return buttonAccept;
-	}
 
-	public void setButtonAccept(ButtonFlat buttonAccept) {
-		this.buttonAccept = buttonAccept;
-	}
+    public void setTitle(CharSequence title) {
+        mTitle.setVisibility(View.VISIBLE);
+        mTitle.setText(title);
+    }
 
-	public ButtonFlat getButtonCancel() {
-		return buttonCancel;
-	}
+    public void setMessage(CharSequence msg) {
+        mScrollView.setVisibility(View.VISIBLE);
+        mMsg.setText(msg);
+    }
 
-	public void setButtonCancel(ButtonFlat buttonCancel) {
-		this.buttonCancel = buttonCancel;
-	}
+    public void setMessage(int msg) {
+        mScrollView.setVisibility(View.VISIBLE);
+        mMsg.setText(msg);
+    }
 
-	public void setOnAcceptButtonClickListener(
-			View.OnClickListener onAcceptButtonClickListener) {
-		this.onAcceptButtonClickListener = onAcceptButtonClickListener;
-		if(buttonAccept != null)
-			buttonAccept.setOnClickListener(onAcceptButtonClickListener);
-	}
+    public void setContentView(View view) {
+        mInnerView.removeAllViews();
+        mInnerView.addView(view);
+        mScrollView.setVisibility(View.VISIBLE);
+    }
 
-	public void setOnCancelButtonClickListener(
-			View.OnClickListener onCancelButtonClickListener) {
-		this.onCancelButtonClickListener = onCancelButtonClickListener;
-		if(buttonCancel != null)
-			buttonCancel.setOnClickListener(onCancelButtonClickListener);
-	}
-	
-	@Override
-	public void dismiss() {
-		Animation anim = AnimationUtils.loadAnimation(context, R.anim.dialog_main_hide_amination);
-		anim.setAnimationListener(new AnimationListener() {
-			
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
-			
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-			
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				view.post(new Runnable() {
-					@Override
-					public void run() {
-			        	Dialog.super.dismiss();
-			        }
-			    });
-				
-			}
-		});
-		Animation backAnim = AnimationUtils.loadAnimation(context, R.anim.dialog_root_hide_amin);
-		
-		view.startAnimation(anim);
-		backView.startAnimation(backAnim);
-	}
-	
-	
+    public void setOkBtn(int id, View.OnClickListener listener) {
+        setOkBtn(id, listener, true);
+    }
 
+    public void setOkBtn(int id, View.OnClickListener listener, boolean isAutoDismiss) {
+        mOkBtn.setVisibility(View.VISIBLE);
+        mOkBtn.setOnClickListener(isAutoDismiss ? new ExternalListener(listener) : listener);
+        mOkBtn.setText(mContext.getString(id));
+    }
+
+    public void setOkBtnBg(int bgId) {
+        mOkBtn.setBackgroundResource(bgId);
+    }
+
+    public void setCancelBtn(int id, View.OnClickListener listener) {
+        setCancelBtn(id, listener, true);
+    }
+
+    public void setCancelBtn(int id, View.OnClickListener listener, boolean isAutoDismiss) {
+        mCancelBtn.setVisibility(View.VISIBLE);
+        mCancelBtn.setOnClickListener(isAutoDismiss ? new ExternalListener(listener) : listener);
+        mCancelBtn.setText(mContext.getString(id));
+    }
+
+
+    private class ExternalListener implements View.OnClickListener {
+        private View.OnClickListener mListener;
+
+        public ExternalListener(View.OnClickListener listener) {
+            mListener = listener;
+        }
+
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            if (mListener != null) {
+                mListener.onClick(v);
+            }
+        }
+    }
 }
