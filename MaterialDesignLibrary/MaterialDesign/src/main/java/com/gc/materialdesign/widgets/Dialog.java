@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ public class Dialog extends android.app.Dialog {
     Context mContext;
     View mRootView;
     View mContentView;
+    ImageView mIcon;
     ScrollView mScrollView;
     TextView mMsg;
     TextView mTitle;
@@ -32,6 +34,7 @@ public class Dialog extends android.app.Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog);
         mTitle = (TextView) findViewById(R.id.title);
+        mIcon = (ImageView)findViewById(R.id.icon);
         mRootView = findViewById(R.id.dialog_rootView);
         mContentView = findViewById(R.id.contentDialog);
         mInnerView = (FrameLayout) findViewById(R.id.inner_view);
@@ -59,6 +62,11 @@ public class Dialog extends android.app.Dialog {
     public void setTitle(CharSequence title) {
         mTitle.setVisibility(View.VISIBLE);
         mTitle.setText(title);
+    }
+
+    public void setIcon(int resId){
+        mIcon.setVisibility(View.VISIBLE);
+        mIcon.setImageResource(resId);
     }
 
     public void setMessage(CharSequence msg) {
